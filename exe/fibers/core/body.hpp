@@ -4,6 +4,6 @@
 
 namespace exe::fibers {
 
-using Body = std::move_only_function<void()>;
+using Body = std::function<void()>;
 
 }  // namespace exe::fiber
