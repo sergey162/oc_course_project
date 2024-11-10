@@ -1,10 +1,5 @@
 #pragma once
 
-
-#include "program/prog_context.hpp"
-#include "san_context.hpp"
-#include <span>
-
 namespace syscalls::context {
 
 struct ITrampoline {
@@ -13,6 +8,14 @@ struct ITrampoline {
  protected:
   ~ITrampoline() = default;
 };
+
+}
+
+#include "program/prog_context.hpp"
+#include "san_context.hpp"
+#include <span>
+
+namespace syscalls::context {
 
 
 // Execution Context =
@@ -56,3 +59,4 @@ class ExecutionContext final : private ITrampoline {
 };
 
 }  // namespace sure
+

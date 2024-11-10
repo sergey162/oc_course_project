@@ -1,2 +1,2 @@
 # fibers
-fibers_framework
+Toy framework

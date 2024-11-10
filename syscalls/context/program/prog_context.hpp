@@ -11,6 +11,11 @@ inline void SwitchMachineContext(void** from_rsp, void** to_rsp);
 
 namespace syscalls::context {
 
+static void MachineContextTrampoline(void*, void*, void*, void*, void*, void*, void* arg7) {
+  ITrampoline* t = (ITrampoline*)arg7;
+  t->Run();
+}
+
 // Target architecture: x86-64
 
 struct MachineContext {
@@ -32,10 +37,7 @@ struct MachineContext {
   }
 };
 
-static void MachineContextTrampoline(void*, void*, void*, void*, void*, void*, void* arg7) {
-  ITrampoline* t = (ITrampoline*)arg7;
-  t->Run();
-}
 
 
 }  // namespace sure
+

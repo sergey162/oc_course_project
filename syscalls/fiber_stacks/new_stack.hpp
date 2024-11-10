@@ -7,7 +7,6 @@
 
 namespace syscalls::stacks {
 
-using Stack = NewStack;
 
 class NewStack {
  private:
