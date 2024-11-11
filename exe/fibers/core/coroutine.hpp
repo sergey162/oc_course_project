@@ -32,7 +32,7 @@ class Coroutine : private syscalls::context::ITrampoline {
   syscalls::context::ExecutionContext loop_context_;
   syscalls::context::ExecutionContext task_context_;
   Stack stack_;
-  bool complete_;
+  bool complete_ = false;
 };
 
 }  // namespace exe::fiber
