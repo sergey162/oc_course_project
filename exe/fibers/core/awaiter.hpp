@@ -6,7 +6,7 @@ namespace exe::fibers {
 
 class Awaiter {
  public:
-  virtual void RunAwaiter(FiberHandle handle) noexcept = 0;
+  virtual void RunAwaiter(FiberHandle) noexcept = 0;
 
   virtual ~Awaiter() = default;
 };
