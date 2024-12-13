@@ -5,7 +5,11 @@
 #include <sys/syscall.h>
 #include <linux/futex.h>
 
-extern "C" long syscall(long number, ...);
+extern "C" {
+
+long syscall(long number, ...);
+
+}
 
 namespace syscalls::atomic {
 
