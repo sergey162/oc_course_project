@@ -13,16 +13,22 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Add LLVM APT repository
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo apt-add-repository "deb http://apt.llvm.org/llvm-toolchain/ubuntu/ jammy main"
+
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y cmake clang++-17 g++-13 
+      run: sudo apt-get update && sudo apt-get install -y cmake clang-19 clang++-19 g++-13
 
     - name: Configure CMake
-      run: cmake -S . -B build
+      run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-19
 
     - name: Build
       run: cmake --build build
 
     - name: Run ASanTests
       run: ctest build/tests/tests_asan
+
     - name: Run TSanTests
       run: ctest build/tests/tests_tsan
