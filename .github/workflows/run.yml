@@ -23,6 +23,6 @@ jobs:
       run: cmake --build build
 
     - name: Run ASanTests
-      run: ctest build/tests/tests_asan
+      run: ./build/tests/tests_asan
     - name: Run TSanTests
-      run: ctest build/tests/tests_tsan
+      run: ./build/tests/tests_tsan
