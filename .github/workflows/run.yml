@@ -16,7 +16,7 @@ jobs:
     - name: Add LLVM APT repository
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo apt-add-repository "deb http://apt.llvm.org/llvm-toolchain/ubuntu/ jammy main"
+        sudo apt-add-repository "deb http://apt.llvm.org/llvm-toolchain/ubuntu/ unstable main"
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y cmake clang-19 clang++-19 g++-13
