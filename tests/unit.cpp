@@ -860,7 +860,7 @@ TEST(Channel, SuspendReceiver) {
   bool done = false;
 
   // Receiver
-  fibers::Go(loop, [&done, chan] mutable {
+  fibers::Go(loop, [&done, chan]() mutable {
     int value = chan.Recv();  // <-- Suspended
     ASSERT_EQ(value, 17);
     done = true;
@@ -873,7 +873,7 @@ TEST(Channel, SuspendReceiver) {
   }
 
   // Sender
-  fibers::Go(loop, [chan] mutable {
+  fibers::Go(loop, [chan]() mutable {
     chan.Send(17);  // <-- Resume suspended receiver
   });
 
@@ -890,7 +890,7 @@ TEST(Channel, SuspendSender) {
   int sent = 0;
 
   // Sender
-  fibers::Go(loop, [&sent, chan] mutable {
+  fibers::Go(loop, [&sent, chan]() mutable {
     for (int v = 0; v < 3; ++v) {
       chan.Send(v);
       ++sent;
@@ -906,7 +906,7 @@ TEST(Channel, SuspendSender) {
   bool done = false;
 
   // Receiver
-  fibers::Go(loop, [&done, chan] mutable {
+  fibers::Go(loop, [&done, chan]() mutable {
     {
       int v = chan.Recv();  // <-- Resume suspended sender
       ASSERT_EQ(v, 0);
@@ -938,7 +938,7 @@ TEST(Channel, Fifo) {
 
   const int kMessages = 128;
 
-  fibers::Go(loop, [chan] mutable {
+  fibers::Go(loop, [chan]() mutable {
     for (int i = 0; i < kMessages; ++i) {
       chan.Send(i);
 
@@ -950,7 +950,7 @@ TEST(Channel, Fifo) {
 
   bool done = false;
 
-  fibers::Go(loop, [&done, chan] mutable {
+  fibers::Go(loop, [&done, chan]() mutable {
     for (int j = 0; j < kMessages; ++j) {
       ASSERT_EQ(chan.Recv(), j);
 

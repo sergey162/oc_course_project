@@ -1,9 +1,9 @@
 #pragma once
 
-#include <functional>
+#include "function.hpp"
 
 namespace exe::fibers {
 
-using Body = std::move_only_function<void()>;  // move-only objects in function
+using Body = fu2::unique_function<void()>;
 
 }  // namespace exe::fibers
