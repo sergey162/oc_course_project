@@ -2,13 +2,12 @@
 
 #include <cstddef>
 
-#include <memory>
-#include "../../sync/spin_lock.hpp"
-#include "../../infra/queues/ring_queue.hpp"
-#include "../sched/suspend.hpp"
-#include "../../sched/task/task.hpp"
 #include "../../infra/queues/intrusive_queue.hpp"
-
+#include "../../infra/queues/ring_queue.hpp"
+#include "../../sched/task/task.hpp"
+#include "../../sync/spin_lock.hpp"
+#include "../sched/suspend.hpp"
+#include <memory>
 
 namespace exe::fibers {
 
@@ -18,14 +17,15 @@ namespace detail {
 
 template <typename T>
 class BufferedChannelState {
-
  private:
+  struct TempAwaiter : public Awaiter,
+                       public sched::task::TaskBase {};
 
-  struct TempAwaiter : public Awaiter, public sched::task::TaskBase {};
-  
   struct SenderAwaiter : public TempAwaiter {
-
-    SenderAwaiter(BufferedChannelState& state, T& value) : state_(state), value_(value) {}
+    SenderAwaiter(BufferedChannelState& state, T& value)
+        : state_(state),
+          value_(value) {
+    }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
       handler_ = handle;
@@ -33,7 +33,8 @@ class BufferedChannelState {
       state_.spin_lock_.unlock();
     }
 
-    void Run() noexcept override {}
+    void Run() noexcept override {
+    }
 
     BufferedChannelState& state_;
     T& value_;
@@ -41,8 +42,10 @@ class BufferedChannelState {
   };
 
   struct ReceiverAwaiter : public TempAwaiter {
-
-    ReceiverAwaiter(BufferedChannelState& state, std::optional<T>& value) : state_(state), value_(value) {}
+    ReceiverAwaiter(BufferedChannelState& state, std::optional<T>& value)
+        : state_(state),
+          value_(value) {
+    }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
       handler_ = handle;
@@ -50,7 +53,8 @@ class BufferedChannelState {
       state_.spin_lock_.unlock();
     }
 
-    void Run() noexcept override {}
+    void Run() noexcept override {
+    }
 
     BufferedChannelState& state_;
     std::optional<T>& value_;
@@ -72,7 +76,8 @@ class BufferedChannelState {
         queue_.TryPush(std::move(value));
         spin_lock_.unlock();
       } else {
-        ReceiverAwaiter* node = static_cast<ReceiverAwaiter*>(wait_queue_.Pop());
+        ReceiverAwaiter* node =
+            static_cast<ReceiverAwaiter*>(wait_queue_.Pop());
         node->value_.emplace(std::move(value));
         spin_lock_.unlock();
         node->handler_.Schedule();
@@ -84,7 +89,6 @@ class BufferedChannelState {
       queue_.TryPush(std::move(value));
       spin_lock_.unlock();
     }
-
   }
 
   T Recv() {
@@ -108,19 +112,18 @@ class BufferedChannelState {
 
  private:
   exe::sync::SpinLock spin_lock_;
-  exe::infra::queues::IntrusiveListSimple<exe::sched::task::TaskBase> wait_queue_;
+  exe::infra::queues::IntrusiveListSimple<exe::sched::task::TaskBase>
+      wait_queue_;
   exe::infra::queues::RingQueue<T> queue_;
 };
 
 }  // namespace detail
-
 
 template <typename T>
 class BufferedChannel {
   using State = detail::BufferedChannelState<T>;
 
  public:
-  // Bounded channel, `capacity` > 0
   explicit BufferedChannel(size_t capacity)
       : state_(std::make_shared<State>(capacity)) {
   }
@@ -137,5 +140,4 @@ class BufferedChannel {
   std::shared_ptr<State> state_;
 };
 
-}  // namespace exe::fiber
-
+}  // namespace exe::fibers

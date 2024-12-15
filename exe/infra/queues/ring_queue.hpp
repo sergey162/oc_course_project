@@ -3,13 +3,15 @@
 #include <optional>
 #include <vector>
 
-namespace exe::infra::queues  {
+namespace exe::infra::queues {
 
 template <typename Task>
 class RingQueue {
  public:
-
-  RingQueue(size_t cap) : capacity_(cap), buffer_(cap) {}
+  RingQueue(size_t cap)
+      : capacity_(cap),
+        buffer_(cap) {
+  }
 
   RingQueue(const RingQueue&) = delete;
 
@@ -31,7 +33,7 @@ class RingQueue {
   }
 
   std::optional<Task> TryPop() {
-    if (head_ + 1 ==  tail_) {
+    if (head_ + 1 == tail_) {
       return std::nullopt;
     }
     Task task = std::move(buffer_[head_ % capacity_].value());
@@ -55,4 +57,4 @@ class RingQueue {
   size_t tail_ = 1u;
 };
 
-}
+}  // namespace exe::infra::queues

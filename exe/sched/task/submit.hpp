@@ -6,7 +6,7 @@
 namespace exe::sched::task {
 
 template <typename F>
-requires requires(F func) { func(); }
+  requires requires(F func) { func(); }
 inline void Submit(IScheduler& scheduler, F fun) {
   auto ptr = new OtherFunctions(std::move(fun));
   scheduler.Submit(ptr);

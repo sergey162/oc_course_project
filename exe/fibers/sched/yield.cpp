@@ -1,19 +1,14 @@
 #include "yield.hpp"
 
-
 namespace exe::fibers {
 
-void Yield() {
-  class YieldAwaiter : public Awaiter {
-   public:
-    void RunAwaiter(FiberHandle handle) noexcept override {
-      handle.Schedule();
-    }
-    virtual ~YieldAwaiter() = default;
-  };
+void YieldAwaiter::RunAwaiter(FiberHandle handle) noexcept {
+  handle.Schedule();
+}
 
+void Yield() {
   YieldAwaiter awaiter;
   exe::fibers::Suspend(&awaiter);
 }
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

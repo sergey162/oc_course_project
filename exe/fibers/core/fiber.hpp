@@ -1,11 +1,11 @@
 #pragma once
 
-#include "coroutine.hpp"
-#include "scheduler.hpp"
-#include "awaiter.hpp"
-#include "handle.hpp"
-#include <utility>
 #include "../../sched/task/submit.hpp"
+#include "awaiter.hpp"
+#include "coroutine.hpp"
+#include "handle.hpp"
+#include "scheduler.hpp"
+#include <utility>
 
 namespace exe::fibers {
 
@@ -39,4 +39,4 @@ class Fiber : public exe::sched::task::TaskBase {
   Coroutine coro_;
 };
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

@@ -4,10 +4,8 @@
 
 #include "../core/awaiter.hpp"
 
-
 namespace exe::fibers {
 
 void Suspend(Awaiter* awaiter);
 
-}  // namespace exe::fiber
-
+}  // namespace exe::fibers

@@ -1,31 +1,29 @@
 #pragma once
 
-
-
-#include <cstdint>
-#include <atomic>
-#include "../sched/suspend.hpp"
 #include "../../infra/lockfree/lf_queue.hpp"
+#include "../sched/suspend.hpp"
+#include <atomic>
+#include <cstdint>
 
 namespace exe::fibers {
 
 struct Stamped {
-  uint32_t waiters_ = 0u; 
+  uint32_t waiters_ = 0u;
   uint32_t count_ = 0u;
   explicit operator uint64_t() const noexcept {
-    return (static_cast<uint64_t>(waiters_) << 32u) + static_cast<uint64_t>(count_);
+    return (static_cast<uint64_t>(waiters_) << 32u) +
+           static_cast<uint64_t>(count_);
   }
   static Stamped to_stamped(uint64_t value) noexcept {
     return {static_cast<uint32_t>(value >> 32u), static_cast<uint32_t>(value)};
   }
 };
 
-
 class WaitGroup {
  private:
-
   struct WGAwaiter : public Awaiter {
-    WGAwaiter(WaitGroup& wg) : wg_(wg) {
+    WGAwaiter(WaitGroup& wg)
+        : wg_(wg) {
     }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
@@ -33,9 +31,9 @@ class WaitGroup {
       wg_.queue_.Push(this);
     }
 
-    WGAwaiter* next_ = nullptr; 
+    WGAwaiter* next_ = nullptr;
     FiberHandle handle_;
-    WaitGroup& wg_;                         
+    WaitGroup& wg_;
   };
 
   friend struct WGAwaiter;
@@ -63,11 +61,15 @@ class WaitGroup {
       current_stamped = Stamped::to_stamped(current);
       if (--current_stamped.count_ == 0u && current_stamped.waiters_ != 0u) {
         waiters = std::exchange(current_stamped.waiters_, 0u);
-        if (count_.compare_exchange_weak(current, static_cast<uint64_t>(current_stamped), std::memory_order_release, std::memory_order_relaxed)) {
+        if (count_.compare_exchange_weak(
+                current, static_cast<uint64_t>(current_stamped),
+                std::memory_order_release, std::memory_order_relaxed)) {
           break;
         }
       } else {
-        if (count_.compare_exchange_weak(current, static_cast<uint64_t>(current_stamped), std::memory_order_release, std::memory_order_relaxed)) {
+        if (count_.compare_exchange_weak(
+                current, static_cast<uint64_t>(current_stamped),
+                std::memory_order_release, std::memory_order_relaxed)) {
           return;
         }
       }
@@ -97,7 +99,7 @@ class WaitGroup {
       node = next;
     }
   }
-  
+
   void Wait() {
     while (true) {
       uint64_t current = count_.load(std::memory_order_acquire);
@@ -106,7 +108,9 @@ class WaitGroup {
         return;
       }
       ++current_stamped.waiters_;
-      if (count_.compare_exchange_weak(current, static_cast<uint64_t>(current_stamped), std::memory_order_release, std::memory_order_relaxed)) {
+      if (count_.compare_exchange_weak(
+              current, static_cast<uint64_t>(current_stamped),
+              std::memory_order_release, std::memory_order_relaxed)) {
         WGAwaiter awaiter(*this);
         Suspend(&awaiter);
       }
@@ -120,4 +124,4 @@ class WaitGroup {
   exe::infra::lockfree::LockFreeQueue2<WGAwaiter> queue_;
 };
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

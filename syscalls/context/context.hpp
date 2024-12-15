@@ -9,7 +9,7 @@ struct ITrampoline {
   ~ITrampoline() = default;
 };
 
-}
+}  // namespace syscalls::context
 
 #include "program/prog_context.hpp"
 #include "san_context.hpp"
@@ -17,14 +17,12 @@ struct ITrampoline {
 
 namespace syscalls::context {
 
-
 // Execution Context =
 // 1) Machine context (registers) +
 // 2) [Address | Thread] sanitizer context +
 
 class ExecutionContext final : private ITrampoline {
  public:
-
   ExecutionContext();
 
   ExecutionContext(const ExecutionContext&) = delete;
@@ -32,7 +30,6 @@ class ExecutionContext final : private ITrampoline {
 
   ExecutionContext(ExecutionContext&&) = delete;
   ExecutionContext& operator=(ExecutionContext&&) = delete;
-
 
   void Setup(std::span<std::byte> stack, ITrampoline* trampoline);
 
@@ -58,5 +55,4 @@ class ExecutionContext final : private ITrampoline {
   SanitizerContext sanitizer_;
 };
 
-}  // namespace sure
-
+}  // namespace syscalls::context

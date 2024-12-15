@@ -8,4 +8,4 @@ void Suspend(Awaiter* awaiter) {
   }
 }
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

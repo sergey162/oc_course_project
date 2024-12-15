@@ -1,26 +1,28 @@
 #pragma once
 
-#include "../sched/suspend.hpp"
-#include "../../sched/task/task.hpp"
-#include "../../sched/task/submit.hpp"
 #include "../../infra/lockfree/lf_stack.hpp"
-#include <cstdint>
-#include <cstddef>
-#include <utility>
+#include "../../sched/task/submit.hpp"
+#include "../../sched/task/task.hpp"
+#include "../sched/suspend.hpp"
 #include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <utility>
 
 namespace exe::fibers {
 
 class Strand {
  private:
-
-  struct SimpleAwaiter : public Awaiter, public sched::task::TaskBase {
-    
-    SimpleAwaiter(Strand& strand) : strand_(strand) {}
+  struct SimpleAwaiter : public Awaiter,
+                         public sched::task::TaskBase {
+    SimpleAwaiter(Strand& strand)
+        : strand_(strand) {
+    }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
       handle_ = handle;
-      exe::sched::task::Submit(handle_.GetScheduler(), static_cast<sched::task::TaskBase*>(this));
+      exe::sched::task::Submit(handle_.GetScheduler(),
+                               static_cast<sched::task::TaskBase*>(this));
     }
 
     void Run() noexcept override {
@@ -37,7 +39,8 @@ class Strand {
       if (count == old_value) {
         handle_.Schedule();
       } else {
-        sched::task::Submit(handle_.GetScheduler(), static_cast<sched::task::TaskBase*>(this));
+        sched::task::Submit(handle_.GetScheduler(),
+                            static_cast<sched::task::TaskBase*>(this));
       }
     }
 
@@ -66,7 +69,10 @@ class Strand {
 
   template <typename F>
   struct StrandAwaiter : public SimpleAwaiter {
-    StrandAwaiter(Strand& strand, F fun) : SimpleAwaiter(strand), fun_(std::move(fun)) {}
+    StrandAwaiter(Strand& strand, F fun)
+        : SimpleAwaiter(strand),
+          fun_(std::move(fun)) {
+    }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
       handle_ = handle;
@@ -74,25 +80,22 @@ class Strand {
     }
 
     void Run() noexcept override {
-      
     }
 
     void RunCallBack() noexcept override {
       fun_();
     }
-  
+
     F fun_;
   };
 
  public:
-
   template <typename U>
   friend struct StrandAwaiter;
 
   friend struct SimpleAwaiter;
 
  public:
-
   Strand() = default;
 
   Strand(const Strand&) = delete;
@@ -125,4 +128,4 @@ class Strand {
   std::atomic<size_t> count_ = 0u;
 };
 
-}
+}  // namespace exe::fibers

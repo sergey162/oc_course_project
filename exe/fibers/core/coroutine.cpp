@@ -36,4 +36,4 @@ void Coroutine::Run() noexcept {
   task_context_.ExitTo(loop_context_);
 }
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

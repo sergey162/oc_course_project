@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "wait.hpp"
 
 namespace syscalls::futex {
@@ -26,5 +25,4 @@ inline void WakeAll(WakeKey key) {
   syscalls::atomic::WakeAll(reinterpret_cast<unsigned int*>(key.atom));
 }
 
-
-}
+}  // namespace syscalls::futex

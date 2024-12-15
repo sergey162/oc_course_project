@@ -1,13 +1,12 @@
 #pragma once
 
-
-#include "task/scheduler.hpp"
 #include "../infra/queues/intr_mpmc_block_queue.hpp"
 #include "../sync/wait_group.hpp"
-#include <thread>
+#include "task/scheduler.hpp"
 #include <cstddef>
-#include <vector>
+#include <thread>
 #include <utility>
+#include <vector>
 
 namespace exe::sched {
 
@@ -26,7 +25,7 @@ class ThreadPool : public task::IScheduler {
 
   void Start();
 
-  void Submit(task::TaskBase* task) override;
+  void Submit(task::TaskBase*) override;
 
   static ThreadPool* Current();
 
@@ -36,7 +35,8 @@ class ThreadPool : public task::IScheduler {
   void WorkerRoutine();
   size_t threads_;
   std::vector<std::thread> workers_;
-  exe::infra::queues::IntrusiveMPMCBlockingQueue<exe::sched::task::TaskBase> queue_;
+  exe::infra::queues::IntrusiveMPMCBlockingQueue<exe::sched::task::TaskBase>
+      queue_;
   exe::sync::WaitGroup wg_;
 };
 

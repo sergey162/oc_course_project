@@ -4,7 +4,6 @@
 
 #if __has_feature(address_sanitizer)
 
-
 #include <sanitizer/asan_interface.h>
 
 namespace syscalls::context {
@@ -45,8 +44,7 @@ struct SanitizerContext {
   SanitizerContext* from_;
 };
 
-}  // namespace sure
-
+}  // namespace syscalls::context
 
 #elif __has_feature(thread_sanitizer)
 
@@ -63,10 +61,11 @@ struct SanitizerContext {
     After();
   }
 
-  // NB: __tsan_switch_to_fiber should be called immediately before switch to fiber
+  // NB: __tsan_switch_to_fiber should be called immediately before switch to
+  // fiber
   // https://github.com/llvm/llvm-project/blob/712dfec1781db8aa92782b98cac5517db548b7f9/compiler-rt/include/sanitizer/tsan_interface.h#L150-L151
-  __attribute__((always_inline))
-  inline void BeforeSwitch(SanitizerContext& target) {
+  __attribute__((always_inline)) inline void BeforeSwitch(
+      SanitizerContext& target) {
     fiber_ = __tsan_get_current_fiber();
     __tsan_switch_to_fiber(target.fiber_, 0);
   }
@@ -75,9 +74,10 @@ struct SanitizerContext {
     After();
   }
 
-  // NB: __tsan_switch_to_fiber should be called immediately before switch to fiber
-  __attribute__((always_inline))
-  inline void BeforeExit(SanitizerContext& target) {
+  // NB: __tsan_switch_to_fiber should be called immediately before switch to
+  // fiber
+  __attribute__((always_inline)) inline void BeforeExit(
+      SanitizerContext& target) {
     target.exit_from_ = this;
     __tsan_switch_to_fiber(target.fiber_, 0);
   }
@@ -95,9 +95,7 @@ struct SanitizerContext {
   SanitizerContext* exit_from_{nullptr};
 };
 
-}  // namespace sure
-
-
+}  // namespace syscalls::context
 
 #else
 
@@ -125,8 +123,6 @@ struct SanitizerContext {
   }
 };
 
-} 
-
-
+}  // namespace syscalls::context
 
 #endif

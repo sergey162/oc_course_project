@@ -11,5 +11,4 @@ class Awaiter {
   virtual ~Awaiter() = default;
 };
 
-
-}  // namespace exe::fiber
+}  // namespace exe::fibers

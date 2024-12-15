@@ -4,7 +4,7 @@ namespace exe::fibers {
 
 class Fiber;
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers
 
 namespace exe::sched::task {
 

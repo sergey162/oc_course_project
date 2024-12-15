@@ -2,8 +2,8 @@
 
 #include "../../infra/lockfree/lf_queue.hpp"
 #include "../sched/suspend.hpp"
-#include <cstdint>
 #include <atomic>
+#include <cstdint>
 
 namespace exe::fibers {
 
@@ -11,11 +11,13 @@ class Mutex {
  private:
   class MutexAwaiter : public Awaiter {
    public:
-    MutexAwaiter(Mutex& mutex) : mutex_(mutex) {}
+    MutexAwaiter(Mutex& mutex)
+        : mutex_(mutex) {
+    }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
       handle_ = handle;
-      mutex_.queue_.Push(this); // no alloc
+      mutex_.queue_.Push(this);  // no alloc
     }
     virtual ~MutexAwaiter() = default;
 
@@ -60,7 +62,7 @@ class Mutex {
 
   bool TryLock() {
     uint32_t value = 0u;
-    return working_.compare_exchange_strong(value, 1u);
+    return working_.compare_exchange_weak(value, 1u);
   }
 
   void unlock() {
@@ -72,4 +74,4 @@ class Mutex {
   exe::infra::lockfree::LockFreeQueue2<MutexAwaiter> queue_;
 };
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

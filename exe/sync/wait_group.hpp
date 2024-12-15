@@ -1,15 +1,13 @@
 #pragma once
 
-#include <cstddef>
-#include "mutex.hpp"
 #include "condition_variable.hpp"
-
+#include "mutex.hpp"
+#include <cstddef>
 
 namespace exe::sync {
 
 class WaitGroup {
  public:
-
   void Add(size_t count) {
     std::lock_guard lock(mutex_);
     count_workers_ += count;
@@ -42,4 +40,4 @@ class WaitGroup {
   std::size_t waiters_ = 0;
 };
 
-}
+}  // namespace exe::sync

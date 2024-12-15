@@ -13,4 +13,4 @@ void Go(Body func) {
   sched::task::Submit(sched, new_fiber);
 }
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

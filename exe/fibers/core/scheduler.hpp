@@ -6,4 +6,4 @@ namespace exe::fibers {
 
 using IScheduler = sched::task::IScheduler;
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

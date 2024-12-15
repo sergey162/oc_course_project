@@ -1,6 +1,5 @@
 #include "run_loop.hpp"
 
-
 namespace exe::sched {
 
 void RunLoop::Submit(task::TaskBase* task) {
@@ -30,8 +29,8 @@ size_t RunLoop::Run() {
 }
 
 bool RunLoop::RunNext() {
-    return RunAtMost(1) == 1;
-  }
+  return RunAtMost(1) == 1;
+}
 
 bool RunLoop::IsEmpty() {
   return queue_.IsEmpty();

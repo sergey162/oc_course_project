@@ -4,8 +4,6 @@
 
 namespace exe::fibers {
 
-// Opaque non-owning handle to the _suspended_ fiber
-
 class FiberHandle {
   friend class Fiber;
 
@@ -45,7 +43,6 @@ class FiberHandle {
 
   exe::sched::task::IScheduler& GetScheduler() noexcept;
 
-
   explicit FiberHandle(Fiber* fiber)
       : fiber_(fiber) {
   }
@@ -56,4 +53,4 @@ class FiberHandle {
   Fiber* fiber_ = nullptr;
 };
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

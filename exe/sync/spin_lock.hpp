@@ -1,14 +1,14 @@
 #pragma once
 #include <atomic>
 
-
 namespace exe::sync {
 
 class SpinLock {
  public:
   void Lock() {
     while (locked_.exchange(true)) {
-      while (locked_.load()) {}
+      while (locked_.load()) {
+      }
     }
   }
 
@@ -38,4 +38,4 @@ class SpinLock {
   std::atomic<bool> locked_{false};
 };
 
-}  // namespace exe::thread
+}  // namespace exe::sync

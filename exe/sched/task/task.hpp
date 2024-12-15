@@ -7,8 +7,7 @@ namespace exe::sched::task {
 struct ITask {
   virtual void Run() noexcept = 0;
 
- protected:
-  ~ITask() = default;
+  virtual ~ITask() = default;
 };
 
 // Intrusive task

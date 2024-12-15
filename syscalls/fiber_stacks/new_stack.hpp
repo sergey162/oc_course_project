@@ -1,12 +1,10 @@
 #pragma once
 
-
 #include <cstdlib>
 #include <span>
 #include <utility>
 
 namespace syscalls::stacks {
-
 
 class NewStack {
  private:
@@ -63,4 +61,4 @@ class NewStack {
   Alloc alloc_;
 };
 
-}
+}  // namespace syscalls::stacks

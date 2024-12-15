@@ -8,7 +8,7 @@ class CondVar {
  public:
   template <typename Mutex>
   void Wait(Mutex& other) {
-    std::uint32_t value = count_.load(std::memory_order_acquire);
+    std::uint32_t value = count_.load();
     other.unlock();
     syscalls::futex::Wait(count_, value);
     other.lock();
@@ -16,13 +16,13 @@ class CondVar {
 
   void NotifyOne() {
     auto wake_key = syscalls::futex::PrepareWake(count_);
-    count_.fetch_add(1, std::memory_order_release);
+    count_.fetch_add(1);
     syscalls::futex::WakeOne(wake_key);
   }
 
   void NotifyAll() {
     auto wake_key = syscalls::futex::PrepareWake(count_);
-    count_.fetch_add(1, std::memory_order_release);
+    count_.fetch_add(1);
     syscalls::futex::WakeAll(wake_key);
   }
 
@@ -30,4 +30,4 @@ class CondVar {
   std::atomic<uint32_t> count_{0u};
 };
 
-}
+}  // namespace exe::sync

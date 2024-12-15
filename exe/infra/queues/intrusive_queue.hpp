@@ -1,11 +1,13 @@
+#pragma once
+
 #include <type_traits>
 
 namespace exe::infra::queues {
 
 template <typename T>
-requires requires (T* ptr) {
-  requires(std::is_same_v<std::decay_t<decltype(ptr->next_node_)>, T*>);
-}
+  requires requires(T* ptr) {
+    requires(std::is_same_v<std::decay_t<decltype(ptr->next_node_)>, T*>);
+  }
 class IntrusiveListSimple {
  public:
   IntrusiveListSimple() = default;
@@ -63,4 +65,4 @@ class IntrusiveListSimple {
   bool availible_ = true;
 };
 
-}  // namespace exe
+}  // namespace exe::infra::queues

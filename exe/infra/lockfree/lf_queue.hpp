@@ -1,3 +1,5 @@
+#pragma once
+
 #include "lf_stack.hpp"
 
 namespace exe::infra::lockfree {
@@ -30,4 +32,4 @@ class LockFreeQueue2 {
   LockFreeStack2<T> second_;
 };
 
-}
+}  // namespace exe::infra::lockfree

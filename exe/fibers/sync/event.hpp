@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "../../infra/lockfree/lf_stack.hpp"
 #include "../sched/suspend.hpp"
 #include <cstdint>
@@ -12,23 +11,28 @@ class Event {
   class EventAwaiter : public Awaiter {
    public:
     EventAwaiter() = delete;
-    EventAwaiter(Event& event) : event_(event) {}
+    EventAwaiter(Event& event)
+        : event_(event) {
+    }
 
     void RunAwaiter(FiberHandle handle) noexcept override {
       handle_ = handle;
-      if (!event_.stack_.TryPush(this)) { //  if stack close - fail
+      if (!event_.stack_.TryPush(this)) {  //  if stack close - fail
         handle.Schedule();
       }
     }
+
    public:
     friend class Event;
     EventAwaiter* next_ = nullptr;
+
    private:
     Event& event_;
     FiberHandle handle_;
   };
 
   friend class EventAwaiter;
+
  public:
   void Wait() {
     if (stack_.IsInvalidate()) {
@@ -37,7 +41,7 @@ class Event {
     EventAwaiter awaiter(*this);
     Suspend(&awaiter);
   }
-  
+
   void Fire() {
     EventAwaiter* current = stack_.GetChainAndInvalidate();
     while (current != nullptr) {
@@ -51,4 +55,4 @@ class Event {
   exe::infra::lockfree::LockFreeStack2<EventAwaiter> stack_;
 };
 
-}
+}  // namespace exe::fibers

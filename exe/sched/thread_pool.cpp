@@ -1,6 +1,5 @@
 #include "thread_pool.hpp"
 
-
 thread_local exe::sched::ThreadPool* g_poolPtr = nullptr;
 
 namespace exe::sched {
@@ -42,7 +41,7 @@ void ThreadPool::Stop() {
 void ThreadPool::WorkerRoutine() {
   while (true) {
     task::TaskBase* task = queue_.Pop();
-    if (task == nullptr) { // queue closed
+    if (task == nullptr) {  // queue closed
       return;
     } else {
       task->Run();

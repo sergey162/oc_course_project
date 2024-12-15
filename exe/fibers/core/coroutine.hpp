@@ -10,7 +10,6 @@ namespace exe::fibers {
 
 class Coroutine : private syscalls::context::ITrampoline {
  public:
-
   explicit Coroutine(Body body);
 
   Coroutine(Body body, size_t stack_size);
@@ -24,7 +23,6 @@ class Coroutine : private syscalls::context::ITrampoline {
   void Suspend();
 
  private:
-
   void Run() noexcept override;
 
  private:
@@ -35,4 +33,4 @@ class Coroutine : private syscalls::context::ITrampoline {
   bool complete_ = false;
 };
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

@@ -20,4 +20,4 @@ exe::sched::task::IScheduler& FiberHandle::GetScheduler() noexcept {
   return fiber_->GetScheduler();
 }
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

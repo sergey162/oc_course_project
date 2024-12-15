@@ -55,4 +55,4 @@ IScheduler& Fiber::GetScheduler() {
   return scheduler_;
 }
 
-}  // namespace exe::fiber
+}  // namespace exe::fibers

@@ -9,7 +9,9 @@ namespace exe::infra::lockfree {
 template <typename T>
 class LockFreeStack2 {
  public:
-  LockFreeStack2() : head_(nullptr) {}
+  LockFreeStack2()
+      : head_(nullptr) {
+  }
 
   void Push(T* node) {
     while (true) {
@@ -56,7 +58,8 @@ class LockFreeStack2 {
 
   T* GetChainAndInvalidate() {
     auto head = head_.exchange((T*)1);
-    if (head == (T*)1) return nullptr;
+    if (head == (T*)1)
+      return nullptr;
     return head;
   }
 
@@ -64,5 +67,4 @@ class LockFreeStack2 {
   std::atomic<T*> head_;
 };
 
-  
-}
+}  // namespace exe::infra::lockfree

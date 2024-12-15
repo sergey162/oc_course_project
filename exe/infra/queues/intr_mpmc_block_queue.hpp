@@ -1,21 +1,18 @@
 #pragma once
 
-
 #include "../../sync/condition_variable.hpp"
-#include <iostream>
 #include "../../sync/mutex.hpp"
 #include <atomic>
+#include <iostream>
 #include <type_traits>
-
 
 namespace exe::infra::queues {
 template <typename T>
-requires requires (T* ptr) {
-  requires(std::is_same_v<std::decay_t<decltype(ptr->next_node_)>, T*>);
-}
+  requires requires(T* ptr) {
+    requires(std::is_same_v<std::decay_t<decltype(ptr->next_node_)>, T*>);
+  }
 class IntrusiveMPMCBlockingQueue {
  public:
-
   IntrusiveMPMCBlockingQueue() = default;
 
   void Push(T* ptr) {
@@ -34,10 +31,10 @@ class IntrusiveMPMCBlockingQueue {
   }
 
   T* Pop() {
-    mutex_.Lock();
+    mutex_.lock();
     while (size_ == 0) {
       if (!availible_) {
-        mutex_.Unlock();
+        mutex_.unlock();
         return nullptr;
       }
       cv_.Wait(mutex_);
@@ -49,13 +46,15 @@ class IntrusiveMPMCBlockingQueue {
     }
     val->next_node_ = nullptr;
     --size_;
-    mutex_.Unlock();
+    mutex_.unlock();
     return val;
   }
 
   void Close() {
-    std::lock_guard lock(mutex_);
-    availible_ = false;
+    {
+      std::lock_guard lock(mutex_);
+      availible_ = false;
+    }
     cv_.NotifyAll();
   }
 
@@ -85,4 +84,4 @@ class IntrusiveMPMCBlockingQueue {
   exe::sync::CondVar cv_;
 };
 
-}
+}  // namespace exe::infra::queues
